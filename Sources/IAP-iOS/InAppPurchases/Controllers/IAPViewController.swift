@@ -34,7 +34,7 @@ public class IAPViewController: UIViewController {
    
     private static let storyboardName: String = "InAppPurchase"
     
-    var selectedModule: IAPModule = .audioBook
+    public var selectedModule: IAPModule = .audioBook
     
     public static var newInstance: IAPViewController? {
         let sb = UIStoryboard.init(name: IAPViewController.storyboardName,
@@ -45,8 +45,8 @@ public class IAPViewController: UIViewController {
     public weak var navAppearanceDelegate: NavigationAppearanceHandler?
 
     
-    weak var delegate: IAPViewControllerDelegate?
-    var module: SubModule = .examPrep
+    public weak var delegate: IAPViewControllerDelegate?
+    public var module: SubModule = .examPrep
     var productIdentifier = ""
     
     var viewModel = IAPViewModel()

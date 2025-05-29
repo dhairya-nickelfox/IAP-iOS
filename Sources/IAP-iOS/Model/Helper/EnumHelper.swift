@@ -200,7 +200,7 @@ enum AudioBookType {
     case female
 }
 
-enum IAPModule {
+public enum IAPModule {
     case audioBook
     case examPrep
     case course
