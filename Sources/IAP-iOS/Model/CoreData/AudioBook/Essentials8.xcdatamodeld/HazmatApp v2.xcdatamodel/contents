@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Audiobook" representedClassName="Audiobook" syncable="YES">
+        <attribute name="audioDownloadState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="audioPurchaseState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bookName" optional="YES" attributeType="String"/>
+        <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isBookmarked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isLastPlayed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastPlayedTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lastProgressTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="savedTrackTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="spanishName" attributeType="String"/>
+        <attribute name="trackTimeFemale" optional="YES" attributeType="String"/>
+        <attribute name="trackTimeMale" optional="YES" attributeType="String"/>
+        <attribute name="urlId" attributeType="String"/>
+        <relationship name="bookmarks" toMany="YES" deletionRule="Nullify" destinationEntity="Bookmark"/>
+    </entity>
+    <entity name="AudiobookSpanish" representedClassName="AudiobookSpanish" syncable="YES">
+        <attribute name="audioDownloadState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="audioPurchaseState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isBookmarked" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isLastPlayed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastPlayedTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lastProgressTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="savedTrackTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="trackTime" attributeType="String"/>
+        <attribute name="urlId" attributeType="String"/>
+        <relationship name="bookmarksSpanish" toMany="YES" deletionRule="Nullify" destinationEntity="BookmarkSpanish"/>
+    </entity>
+    <entity name="Bookmark" representedClassName="Bookmark" syncable="YES">
+        <attribute name="duration" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String"/>
+    </entity>
+    <entity name="BookmarkSpanish" representedClassName="BookmarkSpanish" syncable="YES">
+        <attribute name="duration" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String"/>
+    </entity>
+</model>
