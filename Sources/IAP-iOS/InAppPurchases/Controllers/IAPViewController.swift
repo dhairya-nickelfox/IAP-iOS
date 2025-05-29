@@ -16,7 +16,7 @@ public protocol NavigationAppearanceHandler: AnyObject {
 }
 
 
-protocol IAPViewControllerDelegate: AnyObject {
+public protocol IAPViewControllerDelegate: AnyObject {
     func updatePurchase(view: IAPViewController, success: Bool, module: SubModule)
     func updateRestore(view: IAPViewController, success: Bool)
 }
@@ -31,10 +31,14 @@ public class IAPViewController: UIViewController {
     @IBOutlet weak var appLogoImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var bgGradientView: UIView!
     @IBOutlet weak var titleLabel: UILabel!
+   
+    private static let storyboardName: String = "InAppPurchase"
     
     var selectedModule: IAPModule = .audioBook
-    static var newInstance: IAPViewController? {
-        let sb = UIStoryboard.init(name: Storyboard.inAppPurchase.name, bundle: nil)
+    
+    public static var newInstance: IAPViewController? {
+        let sb = UIStoryboard.init(name: IAPViewController.storyboardName,
+                                   bundle: Bundle.module)
         return sb.instantiateViewController(withIdentifier: self.className()) as? IAPViewController
     }
     

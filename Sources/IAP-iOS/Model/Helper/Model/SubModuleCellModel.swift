@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-enum SubModule {
+public enum SubModule {
     case examPrep, audiobook, course
 
     var tabIndex: Int {
