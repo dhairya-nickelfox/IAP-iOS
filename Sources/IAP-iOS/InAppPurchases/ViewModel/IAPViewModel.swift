@@ -22,11 +22,15 @@ protocol IAPViewModelDelegate: AnyObject {
     func updateButtonViewWithPurchaseSuccess(module: SubModule?)
 }
 
-class IAPViewModel {
+class IAPViewModel: IAPManagerDelegate {
     var delegate: IAPViewModelDelegate?
     private let model = IAPProductModel()
+    private var products: [SKProduct] = []
     
-    init() {}
+    @MainActor
+    init() {
+        IAPManager.shared.delegate = self
+    }
     
     @MainActor fileprivate func updateDataWithPurchasedProduct(product: SKProduct) {
         // haptic after the purchase is complete
@@ -54,92 +58,59 @@ class IAPViewModel {
     
     @MainActor func viewDidSetup() {
         delegate?.willStartLongProcess()
-        
-        IAPManager.shared.getProducts { [weak self] (result) in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.delegate?.didFinishLongProcess()
-                switch result {
-                case .success(let products):
-                    self.model.products = products
-                    if !products.isEmpty {
-                        self.delegate?.updateProductPriceOnButton()
-                    }
-                case .failure(let error):
-                    self.delegate?.showIAPRelatedError(error: error)
-                }
-            }
-        }
+        // Products will be loaded through the delegate method
     }
     
     func getProductForItem(productIdentifier: String) -> SKProduct? {
-        // Check if there is a product fetched from App Store containing
-        // the keyword matching to the selected item's index
-        guard let product = model.getProduct(containing: productIdentifier) else { return nil }
-        return product
+        return products.first { $0.productIdentifier == productIdentifier }
     }
     
     @MainActor func purchase(product: SKProduct) -> Bool {
-        if !IAPManager.shared.canMakePayments() {
+        if !SKPaymentQueue.canMakePayments() {
             return false
         } else {
             delegate?.willStartLongProcess()
-            
-            IAPManager.shared.buy(product: product) { [weak self] result in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    self.delegate?.didFinishLongProcess()
-                    switch result {
-                    case .success:
-                        self.updateDataWithPurchasedProduct(product: product)
-                    case .failure(let error):
-                        self.delegate?.showIAPRelatedError(error: error)
-                    }
-                }
-            }
+            IAPManager.shared.purchase(product: product)
         }
         return true
     }
     
     @MainActor func restorePurchases(selectedModule: IAPModule) -> Bool {
-        if !IAPManager.shared.canMakePayments() {
+        if !SKPaymentQueue.canMakePayments() {
             return false
         } else {
             delegate?.willStartLongProcess()
-            IAPManager.shared.restorePurchases(selectedModule: selectedModule) { [weak self] result in
-                guard let self = self else { return }
-                self.delegate?.didFinishLongProcess()
-                switch result {
-                case .success(let response):
-                    guard response.success else {
-                        self.delegate?.didFinishRestoringPurchasesWithZeroProducts()
-                        return
-                    }
-                    
-                    let productID = Constant.ProductIdentifier.examPrepProductIdentifier
-                    if let purchasedModules = response.purchasedModules,
-                       purchasedModules.contains(productID) {
-                        self.updateDataWithRestoredProduct(module: .examPrep)
-                    }
-                    
-                    let productAudioID = Constant.ProductIdentifier.audiobookProductIdentifier
-                    if let purchasedModules = response.purchasedModules,
-                       purchasedModules.contains(productAudioID) {
-                        self.updateDataWithRestoredProduct(module: .audiobook)
-                    }
-                    
-                    let productCourseID = Constant.ProductIdentifier.coursesProductIdentifier
-                    if let purchasedModules = response.purchasedModules,
-                       purchasedModules.contains(productCourseID) {
-                        self.updateDataWithRestoredProduct(module: .course)
-                    }
-                    
-                    self.delegate?.didFinishRestoringPurchasedProducts()
-                case .failure(let error):
-                    self.delegate?.showIAPRelatedError(error: error)
-                }
-            }
+            IAPManager.shared.restorePurchases()
         }
         return true
+    }
+    
+    // MARK: - IAPManagerDelegate
+    
+    @MainActor
+    func iapManager(_ manager: IAPManager, didUpdateProducts products: [SKProduct]) {
+        self.delegate?.didFinishLongProcess()
+        self.products = products
+        if !products.isEmpty {
+            self.delegate?.updateProductPriceOnButton()
+        }
+    }
+    
+    @MainActor
+    func iapManager(_ manager: IAPManager, didFailToUpdateProducts error: Error) {
+        self.delegate?.didFinishLongProcess()
+        self.delegate?.showIAPRelatedError(error: error)
+    }
+    
+    @MainActor
+    func iapManager(_ manager: IAPManager, didCompletePurchase product: SKProduct) {
+        self.delegate?.didFinishLongProcess()
+        self.updateDataWithPurchasedProduct(product: product)
+    }
+    
+    @MainActor
+    func iapManager(_ manager: IAPManager, didFailPurchase product: SKProduct, error: Error) {
+        self.delegate?.didFinishLongProcess()
+        self.delegate?.showIAPRelatedError(error: error)
     }
 }

@@ -1,10 +1,13 @@
-// swift-tools-version: 6.0
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "IAP-iOS",
+    platforms: [
+        .iOS(.v12) // Set minimum iOS version to 12.0
+    ],
     products: [
         .library(
             name: "IAP-iOS",
@@ -14,13 +17,11 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "7.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "13.0.0"),
-        .package(url: "https://github.com/ReactiveCocoa/ReactiveCocoa.git", branch: "master"),
+        .package(url: "https://github.com/ReactiveCocoa/ReactiveCocoa.git", from: "12.0.0"),
         .package(url: "https://github.com/Nickelfox/FLUtilities.git", branch: "master"),
         .package(url: "https://github.com/realm/realm-cocoa", from: "10.40.0"),
         .package(url: "https://github.com/Nickelfox/FoxAPIKit.git", branch: "develop"),
-        .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift.git", branch: "master"),
-        
-
+        .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift.git", from: "7.0.0"),
     ],
     targets: [
         .target(
@@ -30,7 +31,6 @@ let package = Package(
                 "ReactiveSwift",
                 "FLUtilities",
                 "FoxAPIKit",
-              
                 .product(name: "RealmSwift", package: "realm-cocoa"),
             ],
             path: "Sources/IAP-iOS"
@@ -42,7 +42,8 @@ let package = Package(
                 "FoxAPIKit",
                 "Quick",
                 "Nimble",
-            ]
+            ],
+            path: "Tests/IAP-iOSTests"
         ),
     ]
 )
